@@ -113,6 +113,19 @@ public class FirstTest {
                 article_title);
     }
 
+    @Test
+
+    public void testSearchFieldContainsText()
+    {
+        WebElement element_skip = driver.findElementById("org.wikipedia:id/fragment_onboarding_skip_button");
+        element_skip.click();
+
+        assertElementHasText(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Search Wikipedia",
+                "Search field does not contain expected text"
+        );
+    }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
@@ -155,6 +168,18 @@ public class FirstTest {
         return element;
     }
 
+    private WebElement assertElementHasText(By by, String expected_text, String error_message)
+    {
+        WebElement element = waitForElementPresent(by, error_message, 5);
+        String actual_text = element.getText();
+
+        Assert.assertTrue(
+                error_message,
+                actual_text.contains(expected_text)
+        );
+
+        return element;
+    }
 
 
 }
