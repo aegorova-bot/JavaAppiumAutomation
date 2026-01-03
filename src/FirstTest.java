@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
 
 public class FirstTest {
 
@@ -127,6 +128,38 @@ public class FirstTest {
         );
     }
 
+    @Test
+    public void testCanselSearchDz() {
+        WebElement element_skip = driver.findElementById("org.wikipedia:id/fragment_onboarding_skip_button");
+        element_skip.click();
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5);
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                "Kotlin",
+                "Cannot find search input",
+                5
+        );
+        waitForElementPresent(By.id("org.wikipedia:id/search_results_list"),
+                "Cannot find search results",
+                5);
+
+        assertMoreThanOneElement(
+                By.id("org.wikipedia:id/page_list_item_title"),
+                "Search returned less than two articles"
+        );
+
+        waitForElementAndClear(By.id("org.wikipedia:id/search_src_text"),
+                "Cannot find search field",
+                5
+        );
+        waitForElementNotPresent(By.id("org.wikipedia:id/search_results_list"),
+                "Search results still present",
+                5);
+
+    }
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait = new WebDriverWait(driver, 5);
@@ -180,6 +213,14 @@ public class FirstTest {
 
         return element;
     }
+    private void assertMoreThanOneElement(By by, String errorMessage)
+    {
+        List<WebElement> elements = driver.findElements(by);
 
+        Assert.assertTrue(
+                errorMessage,
+                elements.size() > 1
+        );
+    }
 
 }
