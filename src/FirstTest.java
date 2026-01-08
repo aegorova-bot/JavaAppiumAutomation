@@ -535,6 +535,39 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void testArticleHasTitle()
+    {
+        WebElement element_skip = driver.findElementById(
+                "org.wikipedia:id/fragment_onboarding_skip_button");
+        element_skip.click();
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Object-oriented programming language')]"),
+                "Cannot find article in search results",
+                15
+        );
+
+        assertElementPresent(
+                By.xpath("//*[contains(@text, 'Java (programming language)')]"),
+                "Article title is not present on the page"
+        );
+    }
+
+
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
@@ -679,5 +712,15 @@ public class FirstTest {
     {
         WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
         return element.getAttribute(attribute);
+    }
+
+    private void assertElementPresent(By by, String error_message)
+    {
+        List<WebElement> elements = driver.findElements(by);
+
+        if (elements.size() == 0)
+        {
+            throw new AssertionError(error_message);
+        }
     }
 }
