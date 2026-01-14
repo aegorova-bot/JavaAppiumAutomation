@@ -102,4 +102,13 @@ public class SearchPageObject extends MainPageObject{
         this.assertElementNotPresent(By.xpath(SEARCH_RESULT_LOCATOR),
                 "We found some results");
     }
+
+    public void waitForElementAndClear()
+    {
+        this.waitForElementAndClear(By.id(SEARCH_INPUT),
+                "Cannot find search field and clear it",
+                5
+        );
+    }
+
 }

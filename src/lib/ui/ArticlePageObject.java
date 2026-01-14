@@ -13,7 +13,8 @@ public class ArticlePageObject extends MainPageObject {
             ADD_TO_LIST_BUTTON = "org.wikipedia:id/snackbar_action",
             NAME_FIELD = "org.wikipedia:id/text_input",
             OK_BUTTON = "android:id/button1",
-            BACK_BUTTON = "//android.widget.ImageButton[@content-desc=\"Navigate up\"]";
+            BACK_BUTTON = "//android.widget.ImageButton[@content-desc=\"Navigate up\"]",
+            EXISTING_LIST = "org.wikipedia:id/item_title";
 
     public ArticlePageObject (AppiumDriver driver)
     {
@@ -68,14 +69,36 @@ public class ArticlePageObject extends MainPageObject {
                 15);
     }
 
+    public void addArticleToExistingList()
+    {
+        this.waitForElementAndClick(By.id(SAVE_BUTTON),
+                "Cannot find save button",
+                15);
+
+        this.waitForElementAndClick(By.id(ADD_TO_LIST_BUTTON),
+                "Cannot find 'Add to list' button",
+                15);
+
+        this.waitForElementAndClick(By.id(EXISTING_LIST),
+                "Cannot find 'Add to list' button",
+                15);
+
+    }
+
     public void goBackToMainScreen()
     {
         this.waitForElementAndClick(By.xpath(BACK_BUTTON),
                 "Cannot find back button",
                 5);
 
-        this.waitForElementAndClick(By.xpath(BACK_BUTTON),
-                "Cannot find back button",
-                5);
+    }
+
+    public void articleHasTitleAssert(String substring)
+    {
+        String title_xpath = getTitle(substring);
+        this.assertElementPresent(
+                By.xpath(title_xpath),
+                "Article title is not present on the page"
+        );
     }
 }

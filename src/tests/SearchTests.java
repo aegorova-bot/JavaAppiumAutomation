@@ -52,5 +52,18 @@ public class SearchTests extends CoreTestCase {
         SearchPageObject.assertThereIsNoResultOfSearch();
     }
 
-
+    @Test
+    public void testCanselSearchDz()
+    {
+        this.skipPreview();
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        String search_line = "Kotlin";
+        SearchPageObject.typeSearchLine(search_line);
+        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
+        assertTrue("We found one or less results",
+                amount_of_search_results > 1);
+        SearchPageObject.waitForElementAndClear();
+        SearchPageObject.assertThereIsNoResultOfSearch();
+    }
 }
