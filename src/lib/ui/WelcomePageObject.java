@@ -10,7 +10,9 @@ public class WelcomePageObject extends MainPageObject {
         STEP_SEARCH_IN_LANGUAGES_TITLE = "id:Search in nearly 300 languages",
         STEP_HELP_MAKE_APP_BETTER_TITLE = "id:Help make the app better",
         NEXT_BUTTON = "ios_predicate:name == \"Next\" AND label == \"Next\" AND value == \"Next\"",
-        GET_STARTED_BUTTON = "ios_predicate:name == \"Get started\" AND label == \"Get started\" AND value == \"Get started\"";
+        GET_STARTED_BUTTON = "ios_predicate:name == \"Get started\" AND label == \"Get started\" AND value == \"Get started\"",
+        SKIP_IOS = "ios_predicate:name == 'Skip' AND label == 'Skip' AND type == 'XCUIElementTypeButton'",
+        SKIP_ANDROID = "id:org.wikipedia:id/fragment_onboarding_skip_button";
 
     public WelcomePageObject(AppiumDriver driver)
     {
@@ -51,6 +53,20 @@ public class WelcomePageObject extends MainPageObject {
     {
         this.waitForElementAndClick((GET_STARTED_BUTTON),
                 "Cannot find 'Get Started' button",
+                15);
+    }
+
+    public void clickSkipIOS()
+    {
+        this.waitForElementAndClick(SKIP_IOS,
+                "Cannot find and click skip button",
+                15);
+    }
+
+    public void clickSkipAndroid()
+    {
+        this.waitForElementAndClick(SKIP_ANDROID,
+                "Cannot find and click skip button",
                 15);
     }
 }

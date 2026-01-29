@@ -1,12 +1,16 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 
-public class MyListPageObject extends MainPageObject{
+abstract public class MyListPageObject extends MainPageObject{
 
-    public static final String
-        FOLDER_BY_NAME = "xpath://*[contains(@text, '{FOLDER_NAME}')]",
-        ARTICLE_BY_TITLE = "xpath://*[contains(@text, '{TITLE}')]";
+    protected static String
+        FOLDER_BY_NAME,
+        ARTICLE_BY_TITLE,
+        SYNC_YOUR_SAVED_ARTICLES,
+        POP_UP_CLOSE_BUTTON,
+        BASKET_ICON;
 
     private static String getFolderXpathByName(String name_of_folder)
     {
@@ -45,6 +49,15 @@ public class MyListPageObject extends MainPageObject{
         this.waitForArticleToAppearByTitle(article_title);
         this.swipeElementToLeft((article_xpath),
                 "Cannot find saved article for to delete");
+        if(Platform.getInstance().isIos())
+        {
+            this.waitForElementPresent(BASKET_ICON,
+                    "Cannot find basket icon",
+                    15);
+            this.waitForElementAndClick(BASKET_ICON,
+                    "Cannot find basket icon to delete article",
+                    15);
+        }
         this.waitForArticleToDisappearByTitle(article_title);
 
     }
@@ -55,5 +68,16 @@ public class MyListPageObject extends MainPageObject{
                 "Saved article with title " + article_title + " still presents",
                 15);
     }
+
+    public void closePopUp()
+    {
+        this.waitForElementPresent(SYNC_YOUR_SAVED_ARTICLES,
+                "Cannot find pop-up 'Sync your saved articles?' ",
+                15);
+        this.waitForElementAndClick(POP_UP_CLOSE_BUTTON,
+                "Cannot find close button on pop-up 'Sync your saved articles?'",
+                15);
+    }
+
     }
 

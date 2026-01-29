@@ -2,10 +2,10 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 
-public class NavigationUI extends MainPageObject{
+abstract public class NavigationUI extends MainPageObject{
 
-    private static final String
-            SAVED_ARTICLES_BUTTON = "id:org.wikipedia:id/nav_tab_reading_lists";
+    protected static String
+            SAVED_ARTICLES_BUTTON;
 
     public NavigationUI(AppiumDriver driver)
     {

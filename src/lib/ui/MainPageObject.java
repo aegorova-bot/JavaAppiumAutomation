@@ -15,6 +15,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+import java.util.Collections;
+import lib.Platform;
 
 public class MainPageObject {
 
@@ -91,21 +95,32 @@ public class MainPageObject {
         );
     }
 
-    public void swipeUp (int timeOfSwipe)
-    {
-        TouchAction action = new TouchAction(driver);
+    public void swipeUp(int timeOfSwipe) {
         Dimension size = driver.manage().window().getSize();
-        int x = size.width / 2;
-        int start_y = (int) (size.height * 0.8);
-        int end_y = (int) (size.height * 0.2);
 
+        int startX = size.width / 2;
+        int startY = (int) (size.height * 0.8);
+        int endY   = (int) (size.height * 0.2);
 
-        action
-                .press(PointOption.point(x, start_y))
-                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(timeOfSwipe)))
-                .moveTo(PointOption.point(x, end_y))
-                .release()
-                .perform();
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipe = new Sequence(finger, 1);
+
+        swipe.addAction(finger.createPointerMove(
+                Duration.ZERO,
+                PointerInput.Origin.viewport(),
+                startX,
+                startY
+        ));
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(
+                Duration.ofMillis(timeOfSwipe),
+                PointerInput.Origin.viewport(),
+                startX,
+                endY
+        ));
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        driver.perform(Collections.singletonList(swipe));
     }
 
     public void swipeUpQuick()
@@ -132,25 +147,61 @@ public class MainPageObject {
         };
     }
 
-    public void swipeElementToLeft(String locator, String error_message)
+    public void SwipeUpTillElementAppear(String locator, String error_message, int max_swipes)
     {
-        WebElement element =  waitForElementPresent(locator,
+        int already_swiped = 0;
+        while (!this.isElementLocatedOnTheScreen(locator))
+        {
+            if(already_swiped > max_swipes)
+            {
+                Assert.assertTrue(error_message, this.isElementLocatedOnTheScreen(locator));
+            }
+            swipeUpQuick();
+            ++already_swiped;
+        }
+    }
+
+    public boolean isElementLocatedOnTheScreen(String locator)
+    {
+        int element_location_by_y = this.waitForElementPresent(locator,
+                "Cannot find element by locator",
+                15).getLocation().getY();
+        int screen_size_by_y = driver.manage().window().getSize().getHeight();
+        return element_location_by_y < screen_size_by_y;
+    }
+
+    public void swipeElementToLeft(String locator, String error_message) {
+        WebElement element = waitForElementPresent(
+                locator,
                 error_message,
                 10);
+
         int left_x = element.getLocation().getX();
         int right_x = left_x + element.getSize().getWidth();
         int upper_y = element.getLocation().getY();
         int lower_y = upper_y + element.getSize().getHeight();
         int middle_y = (upper_y + lower_y) / 2;
 
-        TouchAction action = new TouchAction(driver);
-        action
-                .press(PointOption.point(right_x, middle_y))
-                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(150)))
-                .moveTo(PointOption.point(left_x, middle_y))
-                .release()
-                .perform();
-    };
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipe = new Sequence(finger, 1);
+
+        swipe.addAction(finger.createPointerMove(
+                Duration.ZERO,
+                PointerInput.Origin.viewport(),
+                right_x - 1,     // чуть внутри элемента
+                middle_y
+        ));
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(
+                Duration.ofMillis(300),
+                PointerInput.Origin.viewport(),
+                left_x + 1,      // тоже внутри
+                middle_y
+        ));
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        driver.perform(Collections.singletonList(swipe));
+    }
 
     public int getAmountOfElements(String locator)
     {

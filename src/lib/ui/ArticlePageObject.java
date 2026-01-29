@@ -1,19 +1,21 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
+abstract public class ArticlePageObject extends MainPageObject {
 
-    private static final String
-            TITLE = "xpath://*[contains(@text, '{SUBSTRING}')]",
-            FOOTER_ELEMENT = "xpath://*[contains(@text, 'View article in browser')]",
-            SAVE_BUTTON = "id:org.wikipedia:id/page_save",
-            ADD_TO_LIST_BUTTON = "id:org.wikipedia:id/snackbar_action",
-            NAME_FIELD = "id:org.wikipedia:id/text_input",
-            OK_BUTTON = "id:android:id/button1",
-            BACK_BUTTON = "xpath://android.widget.ImageButton[@content-desc=\"Navigate up\"]",
-            EXISTING_LIST = "id:org.wikipedia:id/item_title";
+    protected static String
+            TITLE,
+            FOOTER_ELEMENT,
+            SAVE_BUTTON,
+            ADD_TO_LIST_BUTTON,
+            NAME_FIELD,
+            OK_BUTTON,
+            BACK_BUTTON,
+            CANCEL_BUTTON,
+            EXISTING_LIST;
 
     public ArticlePageObject (AppiumDriver driver)
     {
@@ -38,14 +40,29 @@ public class ArticlePageObject extends MainPageObject {
     public String getArticleTitle(String substring)
     {
         WebElement title_element = waitForTitleElement(substring);
+        if(Platform.getInstance().isAndroid())
+        {
         return title_element.getAttribute("text");
+        }
+        else
+        {
+            return title_element.getAttribute("name");
+        }
     }
 
     public void swipeToFooter()
     {
+        if(Platform.getInstance().isAndroid())
+        {
         this.swipeUpToFindElement((FOOTER_ELEMENT),
                 "Cannot find the end of article",
                 20);
+        } else
+        {
+            this.SwipeUpTillElementAppear((FOOTER_ELEMENT),
+                    "Cannot find the end of article",
+                    40);
+        }
     }
 
     public void addArticleToMyList(String name_of_folder)
@@ -86,9 +103,21 @@ public class ArticlePageObject extends MainPageObject {
 
     public void goBackToMainScreen()
     {
+        if(Platform.getInstance().isAndroid())
+        {
+            this.waitForElementAndClick((BACK_BUTTON),
+                    "Cannot find back button",
+                    15);
+        } else
+        {
         this.waitForElementAndClick((BACK_BUTTON),
                 "Cannot find back button",
                 5);
+
+        this.waitForElementAndClick((CANCEL_BUTTON),
+                "Cannot find back button",
+                5);
+        }
 
     }
 
@@ -99,5 +128,13 @@ public class ArticlePageObject extends MainPageObject {
                 (title_xpath),
                 "Article title is not present on the page"
         );
+    }
+
+    public void getArticlesToMySaved()
+    {
+        this.waitForElementAndClick(SAVE_BUTTON,
+                "Cannot find option to add article to reading list",
+                15);
+
     }
 }
