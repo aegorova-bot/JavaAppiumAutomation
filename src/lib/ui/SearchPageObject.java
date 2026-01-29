@@ -105,7 +105,7 @@ abstract public class SearchPageObject extends MainPageObject{
     {
         this.waitForElementAndClear((SEARCH_INPUT),
                 "Cannot find search field and clear it",
-                5
+                15
         );
     }
 

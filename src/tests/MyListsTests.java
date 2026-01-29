@@ -71,22 +71,59 @@ public class MyListsTests extends CoreTestCase {
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement("Java (programming language)");
-        String name_of_folder = "Learning programming";
-        ArticlePageObject.addArticleToMyList(name_of_folder);
+
+        if(Platform.getInstance().isAndroid())
+        {
+            ArticlePageObject.addArticleToMyList(name_of_folder);
+        }
+        else
+        {
+            ArticlePageObject.getArticlesToMySaved();
+        }
+
         ArticlePageObject.goBackToMainScreen();
-        SearchPageObject.waitForElementAndClear();
+
+        if(Platform.getInstance().isAndroid())
+        {
+            SearchPageObject.waitForElementAndClear();
+        } else
+        {
+            SearchPageObject.initSearchInput();
+        }
         SearchPageObject.typeSearchLine("Python");
         SearchPageObject.clickByArticleWithSubstring("Python (programming language)");
         ArticlePageObject.waitForTitleElement("Python (programming language)");
-        ArticlePageObject.addArticleToExistingList();
-        ArticlePageObject.goBackToMainScreen();
-        ArticlePageObject.goBackToMainScreen();
+        if(Platform.getInstance().isAndroid())
+        {
+            ArticlePageObject.addArticleToExistingList();
+        } else
+        {
+            ArticlePageObject.getArticlesToMySaved();
+        }
+        if(Platform.getInstance().isAndroid())
+        {
+            ArticlePageObject.goBackToMainScreen();
+            ArticlePageObject.goBackToMainScreen();
+        }
+        else
+        {
+            ArticlePageObject.goBackToMainScreen();
+        }
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickSavedArticles();
         MyListPageObject MyListPageObject = MyListPageObjectFactory.get(driver);
-        MyListPageObject.openFolderByName(name_of_folder);
+        if(Platform.getInstance().isAndroid())
+        {
+            MyListPageObject.openFolderByName(name_of_folder);
+
+        }
+        else
+        {
+            MyListPageObject.closePopUp();
+        }
         String article_title = ArticlePageObject.getArticleTitle("Python (programming language)");
         MyListPageObject.swipeByArticleToDelete(article_title);
+        MyListPageObject.checkTheSecondArticleIsPresent("Object-oriented programming language");
     }
 
 }

@@ -10,8 +10,10 @@ abstract public class MyListPageObject extends MainPageObject{
         ARTICLE_BY_TITLE,
         SYNC_YOUR_SAVED_ARTICLES,
         POP_UP_CLOSE_BUTTON,
-        BASKET_ICON;
+        BASKET_ICON,
+        SECOND_ARTICLE_LOCATOR;
 
+    /*TEMPLATE METHODS*/
     private static String getFolderXpathByName(String name_of_folder)
     {
         return FOLDER_BY_NAME.replace("{FOLDER_NAME}", name_of_folder);
@@ -21,6 +23,12 @@ abstract public class MyListPageObject extends MainPageObject{
     {
         return ARTICLE_BY_TITLE.replace("{TITLE}", article_title);
     }
+
+    private static String getDescriptionOfArticle(String substring)
+    {
+        return SECOND_ARTICLE_LOCATOR.replace("{SUBSTRING}", substring);
+    }
+    /*TEMPLATE METHODS*/
 
     public MyListPageObject(AppiumDriver driver)
     {
@@ -76,6 +84,14 @@ abstract public class MyListPageObject extends MainPageObject{
                 15);
         this.waitForElementAndClick(POP_UP_CLOSE_BUTTON,
                 "Cannot find close button on pop-up 'Sync your saved articles?'",
+                15);
+    }
+
+    public void checkTheSecondArticleIsPresent(String substring)
+    {
+        String description = getDescriptionOfArticle(substring);
+        waitForElementPresent(description,
+                "Cannot find the second article on view",
                 15);
     }
 
